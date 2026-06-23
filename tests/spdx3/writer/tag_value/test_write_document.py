@@ -29,7 +29,9 @@ def test_render_creation_info():
     output_str = io.StringIO()
     write_spdx_document(spdx_document, text_output=output_str)
 
-    assert output_str.getvalue() == """\
+    assert (
+        output_str.getvalue()
+        == """\
 ## SPDX Document
 SPDXID: SPDXRef-FOO
 name: BAR
@@ -38,5 +40,7 @@ name: BAR
   created: 2024-01-01T00:00:00Z
   profile: SOFTWARE
   data license: CC0-1.0
-elements: 
-"""  # noqa: W291 # elements: are printed with a space
+elements: \
+
+"""  # noqa: W291 # elements: are printed with trailing space
+    )
