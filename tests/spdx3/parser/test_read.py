@@ -3,8 +3,8 @@
 import os
 
 import pytest
-from spdx_python_model import v3_0_1 as spdx_3_0
 
+from spdx_tools.spdx3.object_set import SpdxObjectSet
 from spdx_tools.spdx3.parser import parse_file
 from spdx_tools.spdx.parser.error import SPDXParsingError
 
@@ -14,7 +14,7 @@ EXAMPLE_FILE = os.path.join(os.path.dirname(__file__), os.pardir, "data", "examp
 def test_parse_file_returns_object_set():
     object_set = parse_file(EXAMPLE_FILE)
 
-    assert isinstance(object_set, spdx_3_0.SHACLObjectSet)
+    assert isinstance(object_set, SpdxObjectSet)
 
     elements = list(object_set.foreach())
     assert len(elements) == 60

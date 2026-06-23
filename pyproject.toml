@@ -70,6 +70,7 @@ explicit_package_bases = true
 # they are excluded below so they don't mask issues in the new code.
 files = [
     "src/spdx_tools/spdx3/formats.py",
+    "src/spdx_tools/spdx3/object_set.py",
     "src/spdx_tools/spdx3/parser",
 ]
 
