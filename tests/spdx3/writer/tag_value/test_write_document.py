@@ -42,5 +42,5 @@ name: BAR
   data license: CC0-1.0
 elements: \
 
-"""  # noqa: W291 # elements: are printed with trailing space
-    )
+"""
+    )  # noqa: W291 # elements: are printed with trailing space
