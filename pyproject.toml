@@ -37,7 +37,6 @@ dependencies = [
     "pyyaml",
     "rdflib",
     "semantic_version",
-    "spdx-python-model @ git+https://github.com/spdx/spdx-python-model.git@main",
     "uritools",
     "xmltodict",
 ]
@@ -45,9 +44,15 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 test = ["pyshacl", "pytest", "tzdata"]
-code_style = ["black", "flake8", "isort"]
+code_style = ["black", "flake8", "isort", "mypy"]
 graph_generation = ["networkx", "pygraphviz"]
-development = ["black", "flake8", "isort", "networkx", "pyshacl", "pytest"]
+# Experimental SPDX 3.0 support is built on the spdx-python-model bindings.
+# It is an optional extra (not a core dependency) because the bindings are not
+# yet published to PyPI and must be built from git, where the build-time code
+# generation does not currently work on Windows. Keeping it optional ensures the
+# core package installs on all platforms. Install with: pip install ".[spdx3]"
+spdx3 = ["spdx-python-model @ git+https://github.com/spdx/spdx-python-model.git@main"]
+development = ["black", "flake8", "isort", "mypy", "networkx", "pyshacl", "pytest"]
 
 [project.scripts]
 pyspdxtools = "spdx_tools.spdx.clitools.pyspdxtools:main"
@@ -59,6 +64,31 @@ Documentation = "https://spdx.github.io/tools-python/"
 Repository = "https://github.com/spdx/tools-python.git"
 Issues = "https://github.com/spdx/tools-python/issues"
 Changelog = "https://github.com/spdx/tools-python/blob/main/CHANGELOG.md"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+mypy_path = "src"
+explicit_package_bases = true
+# The new SPDX 3 code is fully typed and checked under --strict.
+# The legacy SPDX 2 modules are not strict-clean yet and are out of scope here;
+# they are excluded below so they don't mask issues in the new code.
+files = [
+    "src/spdx_tools/spdx3/formats.py",
+    "src/spdx_tools/spdx3/parser",
+]
+
+# spdx-python-model ships a py.typed marker but its generated bindings expose
+# many attributes as Any; this keeps strict checks meaningful without noise.
+[[tool.mypy.overrides]]
+module = ["spdx_python_model.*"]
+ignore_missing_imports = true
+
+# Pre-existing SPDX 2 code imported by the new modules (e.g. SPDXParsingError)
+# is not yet strict-typed; do not fail the new-code check on it.
+[[tool.mypy.overrides]]
+module = ["spdx_tools.spdx.*"]
+ignore_errors = true
 
 [tool.setuptools]
 include-package-data = true
